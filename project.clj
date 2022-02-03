@@ -15,7 +15,7 @@
     :source-paths ["src"]
     :compiler {:main perlin2d.core}
       :install-deps true
-      :output-to "public/fancy_alert.js"
+      :output-to "public/perlin2d.js"
       :output-dir ".cljsbuild"
       :optimizations :none
       :source-map true)
