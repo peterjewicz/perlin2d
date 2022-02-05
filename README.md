@@ -19,3 +19,5 @@ more realistic look for things like terrain.
 (do-octave 1 2 8 0.005 1)
 
 ```
+
+If you look in the ```demo``` folder you'll find a simple example that uses the provide functions to generate a randomized terrain.
