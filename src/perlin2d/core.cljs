@@ -64,14 +64,13 @@
 
 
 (defn do-octave [x y octaves frequency amplitude]
-  (let [octave-count octaves]
-    (loop [i 0
-           n 0
-           f frequency
-           a amplitude]
-      (if (= i octave-count)
-        n
-        (recur (+ 1 i)
-               (+ n (* a (perlin2D (* x f) (* y f))))
-               (* f 2)
-               (* a 0.5))))))
+  (loop [i 0
+         n 0
+         f frequency
+         a amplitude]
+    (if (= i octaves)
+      n
+      (recur (+ 1 i)
+             (+ n (* a (perlin2D (* x f) (* y f))))
+             (* f 2)
+             (* a 0.5)))))
