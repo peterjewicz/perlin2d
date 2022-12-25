@@ -27,6 +27,7 @@ If you look in the ```demo``` folder you'll find a simple example that uses the 
 Add this to your `deps.edn` `:deps` map:
 ```
 peterjewicz/perlin2d {:git/url "https://github.com/peterjewicz/perlin2d.git"
-                     :git/sha "e2529fc19273af218bf0039dcc08bb78b4eacb0c"}
+                     :git/sha "bd6e8d60b83bdc2a8730dbd328c2899a90604773"}
 ```
 
+Then you can use this library's functions via the `perlin2d.core` namespace.
