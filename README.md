@@ -21,3 +21,13 @@ more realistic look for things like terrain.
 ```
 
 If you look in the ```demo``` folder you'll find a simple example that uses the provide functions to generate a randomized terrain.
+
+## Installation (`deps.edn`)
+
+Add this to your `deps.edn` `:deps` map:
+```
+peterjewicz/perlin2d {:git/url "https://github.com/peterjewicz/perlin2d.git"
+                     :git/sha "bd6e8d60b83bdc2a8730dbd328c2899a90604773"}
+```
+
+Then you can use this library's functions via the `perlin2d.core` namespace.
