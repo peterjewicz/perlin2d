@@ -15,7 +15,16 @@
    49,192,214, 31,181,199,106,157,184, 84,204,176,115,121,50,45,127, 4,150,254,
    138,236,205,93,222,114,67,29,24,72,243,141,128,195,78,66,215,61,156,180])
 
-(def P (shuffle (concat p1 p1))); Prevents wrap
+(def generated (atom nil)) ; we record our seed map here so we don't regenerate it on every pass
+
+(defn generate-by-seed [seed]
+  (let [base (concat p1 p1)]
+    (map #(+ % seed) base)))
+
+(defn get-P [seed]
+  (cond 
+    (and seed (not @generated)) (reset! generated (generate-by-seed seed))
+    (and (not seed) (not @generated)) (reset! generated (shuffle (concat p1 p1))))) ; just use our shuffled value prevents warp
 
 (defn create-vector [x y]
   {:x x :y y})
@@ -37,7 +46,8 @@
 (defn lin-interp [t a1 a2]
   (+ a1 (* t (- a2 a1))))
 
-(defn perlin2D [initialX initialY]
+(defn perlin2D [initialX initialY & [seed]] 
+  (get-P seed) ; either generates our seed map or ignores if already set
   (let [x (bit-and initialX 255)
         y (bit-and initialY 255)
         xf (- initialX (.floor js/Math initialX))
@@ -47,10 +57,10 @@
         bottomRight (create-vector (- xf 1.0) yf)
         bottomleft (create-vector xf yf)
         ; get values to create our constant vectors
-        valueTopRight (nth P (+ (nth P (+ x 1)) 1 y))
-        valueTopLeft (nth P (+ (nth P x) 1 y))
-        valueBottomRight (nth P (+ (nth P (+ x 1)) y)) ; F(0,0) = p[1] + 0
-        valueBottomLeft (nth P (+ (nth P x) y))
+        valueTopRight (nth @generated (+ (nth @generated (+ x 1)) 1 y))
+        valueTopLeft (nth @generated (+ (nth @generated x) 1 y))
+        valueBottomRight (nth @generated (+ (nth @generated (+ x 1)) y)) ; F(0,0) = p[1] + 0
+        valueBottomLeft (nth @generated (+ (nth @generated x) y))
 
         ; Get out dot products
         dotTopRight (calc-dot-product topRight (get-constant-vector valueTopRight))
@@ -63,14 +73,15 @@
       (lin-interp u (lin-interp v dotBottomLeft dotTopLeft) (lin-interp v dotBottomRight dotTopRight))))
 
 
-(defn do-octave [x y octaves frequency amplitude]
-  (loop [i 0
-         n 0
-         f frequency
-         a amplitude]
-    (if (= i octaves)
-      n
-      (recur (+ 1 i)
-             (+ n (* a (perlin2D (* x f) (* y f))))
-             (* f 2)
-             (* a 0.5)))))
+(defn do-octave [x y octaves frequency amplitude & [seed]]
+  (let [seed-val (or seed nil)] 
+    (loop [i 0
+           n 0
+           f frequency
+           a amplitude]
+      (if (= i octaves)
+        n
+        (recur (+ 1 i)
+               (+ n (* a (perlin2D (* x f) (* y f) seed)))
+               (* f 2)
+               (* a 0.5))))))
